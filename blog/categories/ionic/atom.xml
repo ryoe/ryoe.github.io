@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[ryoe]]></title>
-  <link href="http://ryoe.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Ionic | ryoe]]></title>
+  <link href="http://ryoe.github.io/blog/categories/ionic/atom.xml" rel="self"/>
   <link href="http://ryoe.github.io/"/>
   <updated>2016-05-28T13:50:27-04:00</updated>
   <id>http://ryoe.github.io/</id>
@@ -33,31 +33,19 @@
 
 <p>Here&rsquo;s my <strong>World Famous<sup>TM</sup> Kill it with fire!</strong> recipe:</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rm -rf ./plugins
-</span><span class='line'>rm -rf ./node_modules
-</span><span class='line'>rm -rf ./www/lib
-</span><span class='line'>
-</span><span class='line'>ionic platform rm ios
-</span><span class='line'>ionic platform rm android
-</span><span class='line'>
-</span><span class='line'>npm install
-</span><span class='line'>bower install
-</span><span class='line'>
-</span><span class='line'>ionic platform add ios
-</span><span class='line'>ionic platform add android</span></code></pre></td></tr></table></div></figure>
+<pre><code>rm -rf ./plugins
+rm -rf ./node_modules
+rm -rf ./www/lib
 
+ionic platform rm ios
+ionic platform rm android
+
+npm install
+bower install
+
+ionic platform add ios
+ionic platform add android
+</code></pre>
 
 <p>Shout out to <a href="https://twitter.com/ryanlabouve">Ryan LaBouve</a> for his help nurturing and growing <strong>Kill it with fire!</strong> from a simple home remedy into the world class recipe you see today.</p>
 ]]></content>
