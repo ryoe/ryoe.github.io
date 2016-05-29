@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Having Ionic plugin problems? Kill it with fire!"
-date: 2016-05-28
+date: 2016-05-28 13:51
 comments: true
 categories: [Ionic, Ionic plugins, Kill it with fire]
 ---
