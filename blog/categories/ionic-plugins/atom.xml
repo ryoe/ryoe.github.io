@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ionic Plugins | ryoe]]></title>
   <link href="http://ryoe.github.io/blog/categories/ionic-plugins/atom.xml" rel="self"/>
   <link href="http://ryoe.github.io/"/>
-  <updated>2016-05-28T22:48:27-04:00</updated>
+  <updated>2016-05-28T23:49:28-04:00</updated>
   <id>http://ryoe.github.io/</id>
   <author>
     <name><![CDATA[Rick Yoesting]]></name>
@@ -31,7 +31,7 @@
 
 <p>When <code>ionic state reset</code> isn&rsquo;t enough it&rsquo;s time to break out the big guns!</p>
 
-<p>Here&rsquo;s my <strong>World Famous<sup>TM</sup> Kill it with fire!</strong> recipe:</p>
+<p>Here&rsquo;s my <strong>World Famous Kill it with Fire!<sup>TM</sup> </strong> recipe:</p>
 
 <pre><code>rm -rf ./plugins
 rm -rf ./node_modules
