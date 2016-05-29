@@ -18,7 +18,7 @@ But if that doesn't work there is only one thing left to do - **kill it with fir
 
 When `ionic state reset` isn't enough it's time to break out the big guns!
 
-Here's my **World Famous<sup>TM</sup> Kill it with fire!** recipe:
+Here's my **World Famous Kill it with Fire!<sup>TM</sup> ** recipe:
 
 ```
 rm -rf ./plugins
