@@ -4,7 +4,7 @@
   <title><![CDATA[ryoe]]></title>
   <link href="http://ryoe.github.io/atom.xml" rel="self"/>
   <link href="http://ryoe.github.io/"/>
-  <updated>2016-05-28T20:09:33-04:00</updated>
+  <updated>2016-05-28T20:28:23-04:00</updated>
   <id>http://ryoe.github.io/</id>
   <author>
     <name><![CDATA[Rick Yoesting]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Having Ionic Plugin Problems? Kill It With Fire!]]></title>
     <link href="http://ryoe.github.io/archives/having-ionic-plugin-problems-kill-it-with-fire/"/>
-    <updated>2016-05-28T00:00:00-04:00</updated>
+    <updated>2016-05-28T13:51:00-04:00</updated>
     <id>http://ryoe.github.io/archives/having-ionic-plugin-problems-kill-it-with-fire</id>
     <content type="html"><![CDATA[<p>Ever have one of those days when your Ionic plugins just won&rsquo;t work?</p>
 
