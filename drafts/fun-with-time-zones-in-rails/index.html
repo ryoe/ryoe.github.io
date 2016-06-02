@@ -98,7 +98,7 @@ June 01, 2016
   </header>
 
 
-<div class="entry-content"><p>Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn&rsquo;t change over night for our US-based customers. What we wanted is to not run the tasks between 1am-7am Eastern time &ndash; meaning the tasks would run between 7am Eastern and 10pm Western.</p>
+<div class="entry-content"><p>Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn&rsquo;t change over night for our continental US-based customers. What we wanted is for the tasks to only run between 7am-1am Eastern (4am-10pm Western) which should cover typical work hours. In other words, we want to ensure the tasks do not run between 1am-7am Eastern.</p>
 
 <p>If you&rsquo;ve ever worked with time zones before, then you know this is often trickier than you&rsquo;d expect. This would be no different.</p>
 
@@ -241,6 +241,10 @@ June 01, 2016
 <span class='line-number'>30</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">MyDataSync</span>
 </span><span class='line'>  <span class="k">module</span> <span class="nn">RakeTaskTimeHelper</span>
+</span><span class='line'>    <span class="c1"># default &quot;not allowed&quot; to 1am-7am US Eastern</span>
+</span><span class='line'>    <span class="c1"># a real implementation would use environment vars, not hard-coded values</span>
+</span><span class='line'>    <span class="no">NOT_ALLOWED_START_HOUR</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="no">NOT_ALLOWED_END_HOUR</span> <span class="o">=</span> <span class="mi">7</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">is_allowed_to_run</span>
 </span><span class='line'>      <span class="n">startHour</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">not_allowed_start_hour</span>
@@ -256,16 +260,12 @@ June 01, 2016
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="kp">private</span>
-</span><span class='line'>    <span class="c1"># default &quot;not allowed&quot; to 1am-7am US Eastern</span>
-</span><span class='line'>    <span class="c1"># a real implementation would use environment vars, not hard-coded values</span>
 </span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">not_allowed_start_hour</span>
-</span><span class='line'>      <span class="n">startHour</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span class='line'>      <span class="n">startHour</span>
+</span><span class='line'>      <span class="no">NOT_ALLOWED_START_HOUR</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">not_allowed_end_hour</span>
-</span><span class='line'>      <span class="n">endHour</span> <span class="o">=</span> <span class="mi">7</span>
-</span><span class='line'>      <span class="n">endHour</span>
+</span><span class='line'>      <span class="no">NOT_ALLOWED_END_HOUR</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
@@ -375,11 +375,13 @@ June 01, 2016
 
 <p>Working with time zones is tricky. Many developers, myself included, have been tripped up by intricasies of working with time zones. However, by using Rails <strong><code>Time.use_zone</code></strong>, we were able to achieve our stated goal of writing simple code to short-circuit rake tasks when they&rsquo;re not allowed to run. And by using Rails test helper <strong><code>travel_to</code></strong> we were able to write tests to ensure our helper class implemenation is working correctly.</p>
 
+<p>Finally, many thanks to <a href="https://twitter.com/datachomp">@datachomp</a> and <a href="https://twitter.com/jagthedrummer">@jagthedrummer</a> for helpful suggestions to improve this post.</p>
+
 <hr />
 
 <h2>Resources</h2>
 
-<p>These blog posts were super helpful in understanding how to deal with time zones in Rails.</p>
+<p>There is much more to time zones in Ruby and Rails than I covered here. These blog posts were super helpful in understanding how to deal with time zones in Rails.</p>
 
 <p>Elle Meredith&rsquo;s excellent two-part series: <a href="https://robots.thoughtbot.com/its-about-time-zones">It&rsquo;s About Time (Zones)</a> and <a href="https://robots.thoughtbot.com/a-case-study-in-multiple-time-zones">A Case Study in Multiple Time Zones</a>.</p>
 
@@ -426,12 +428,6 @@ June 01, 2016
     </p>
   </footer>
 </article>
-
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-  </section>
 
 </div>
 
@@ -494,22 +490,6 @@ June 01, 2016
 
 </footer>
   
-
-<script type="text/javascript">
-      var disqus_shortname = 'ryoetheblog';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://ryoe.github.io/drafts/fun-with-time-zones-in-rails/index.html';
-        var disqus_url = 'http://ryoe.github.io/drafts/fun-with-time-zones-in-rails/index.html';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
 
 
 
