@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ionic Plugins | ryoe - The Blog]]></title>
+  <link href="http://ryoe.github.io/blog/categories/ionic-plugins/atom.xml" rel="self"/>
+  <link href="http://ryoe.github.io/"/>
+  <updated>2016-05-30T21:07:32-04:00</updated>
+  <id>http://ryoe.github.io/</id>
+  <author>
+    <name><![CDATA[Rick Yoesting]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Having Ionic Plugin Problems? Kill It With Fire!]]></title>
+    <link href="http://ryoe.github.io/archives/having-ionic-plugin-problems-kill-it-with-fire/"/>
+    <updated>2016-05-28T13:51:00-04:00</updated>
+    <id>http://ryoe.github.io/archives/having-ionic-plugin-problems-kill-it-with-fire</id>
+    <content type="html"><![CDATA[<p>Ever have one of those days when your Ionic plugins just won&rsquo;t work?</p>
+
+<p>Running <code>ionic state reset</code> should solve most issues.</p>
+
+<p>But if that doesn&rsquo;t work there is only one thing left to do - <strong>kill it with fire!</strong></p>
+
+<!-- more -->
+
+
+<h1>Kill it with fire!</h1>
+
+<p>When <code>ionic state reset</code> isn&rsquo;t enough it&rsquo;s time to break out the big guns!</p>
+
+<p>Here&rsquo;s my <strong>World Famous Kill it with Fire!<sup>TM</sup> </strong> recipe:</p>
+
+<pre><code>rm -rf ./plugins
+rm -rf ./node_modules
+rm -rf ./www/lib
+
+ionic platform rm ios
+ionic platform rm android
+
+npm install
+bower install
+
+ionic platform add ios
+ionic platform add android
+</code></pre>
+
+<p>Shout out to <a href="https://twitter.com/ryanlabouve">Ryan LaBouve</a> for his help nurturing and growing <strong>Kill it with fire!</strong> from a simple home remedy into the world class recipe you see today.</p>
+]]></content>
+  </entry>
+  
+</feed>
