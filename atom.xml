@@ -4,7 +4,7 @@
   <title><![CDATA[ryoe - The Blog]]></title>
   <link href="http://ryoe.github.io/atom.xml" rel="self"/>
   <link href="http://ryoe.github.io/"/>
-  <updated>2016-06-01T20:37:00-04:00</updated>
+  <updated>2016-06-01T20:55:53-04:00</updated>
   <id>http://ryoe.github.io/</id>
   <author>
     <name><![CDATA[Rick Yoesting]]></name>
@@ -12,6 +12,302 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Fun With Time Zones in Rails]]></title>
+    <link href="http://ryoe.github.io/archives/fun-with-time-zones-in-rails/"/>
+    <updated>2016-06-01T14:45:00-04:00</updated>
+    <id>http://ryoe.github.io/archives/fun-with-time-zones-in-rails</id>
+    <content type="html"><![CDATA[<p>Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn&rsquo;t change over night for our continental US-based customers. What we wanted is for the tasks to only run between 7am-1am Eastern (4am-10pm Western) which should cover typical waking hours. In other words, we want to ensure the tasks do not run between 1am-7am Eastern.</p>
+
+<p>If you&rsquo;ve ever worked with time zones before, then you know this is often trickier than you&rsquo;d expect. This would be no different.</p>
+
+<p>Thankfully, the Ruby <a href="http://ruby-doc.org/core-2.2.2/Time.html">Time</a> and Rails <a href="http://api.rubyonrails.org/classes/ActiveSupport/TimeWithZone.html">ActiveSupport::TimeWithZone</a> classes provide everything we need.</p>
+
+<h2>Goal: Do not run certain rake tasks between 1am-7am Eastern</h2>
+
+<p>We want an easy way to skip running certain tasks during certain hours of the day. In addtion, we want to be able to define those hours of the day using the time zone of our choice so that it&rsquo;s easier to understand. Ideally, we&rsquo;ll be able to write a little helper class so we can do something like this in our rake tasks:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">namespace</span> <span class="ss">:mydatasync</span> <span class="k">do</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">desc</span> <span class="s1">&#39;Syncs the data for syncable things...&#39;</span>
+</span><span class='line'>  <span class="n">task</span> <span class="ss">sync</span><span class="p">:</span> <span class="ss">:environment</span> <span class="k">do</span>
+</span><span class='line'>    <span class="k">unless</span> <span class="no">MyDataSync</span><span class="o">::</span><span class="no">RakeTaskTimeHelper</span><span class="o">.</span><span class="n">is_allowed_to_run</span>
+</span><span class='line'>      <span class="c1"># notify team that we&#39;re skipping this sync operation</span>
+</span><span class='line'>      <span class="k">return</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1"># sync stuff...</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!-- more -->
+
+
+<h2>Finding the correct time zone</h2>
+
+<p>To achieve our goal, we first need find out how Rails refers to the Eastern time zone. To see all time zones in Rails, just run <code>rake time:zones:all</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; rake <span class="nb">time</span>:zones:all
+</span><span class='line'>
+</span><span class='line'>...
+</span><span class='line'>
+</span><span class='line'>* UTC -05:00 *
+</span><span class='line'>Bogota
+</span><span class='line'>Eastern Time <span class="o">(</span>US <span class="p">&amp;</span> Canada<span class="o">)</span>
+</span><span class='line'>Indiana <span class="o">(</span>East<span class="o">)</span>
+</span><span class='line'>Lima
+</span><span class='line'>Quito
+</span><span class='line'>
+</span><span class='line'>...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Cool! For our purposes, we&rsquo;ll need to use <strong>Eastern Time (US &amp; Canada)</strong> when dealing with time zones.</p>
+
+<h2>Using our time zone in a UTC world</h2>
+
+<p>By default, Ruby and Rails default time to UTC. In Rails, this can be overridden in <code>config/application.rb</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># default time zone is UTC</span>
+</span><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">time_zone</span> <span class="o">=</span> <span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In practice, it&rsquo;s best to leave the system time zone set to UTC. Instead, we can use Rails <strong><code>Time.use_zone</code></strong> to override Ruby <strong><code>Time.zone</code></strong> inside a block. Once block execution completes, the original time zone is restored.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># doing stuff in UTC...</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Time</span><span class="o">.</span><span class="n">use_zone</span><span class="p">(</span><span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="c1"># do stuff in the Eastern time zone</span>
+</span><span class='line'>  <span class="c1"># date and time automatically translated from UTC to Eastern Time</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># resume doing stuff in UTC...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Putting it all together</h2>
+
+<p>Here&rsquo;s a small module we can use in our rake task to see if it is &ldquo;allowed&rdquo; or &ldquo;not allowed&rdquo; at the current time. Notice we check to see if the time is allowed in the <strong><code>Time.use_zone</code></strong> block.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">MyDataSync</span>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">RakeTaskTimeHelper</span>
+</span><span class='line'>    <span class="c1"># default &quot;not allowed&quot; to 1am-7am US Eastern</span>
+</span><span class='line'>    <span class="c1"># a real implementation would use environment vars, not hard-coded values</span>
+</span><span class='line'>    <span class="no">NOT_ALLOWED_START_HOUR</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="no">NOT_ALLOWED_END_HOUR</span> <span class="o">=</span> <span class="mi">7</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">is_allowed_to_run</span>
+</span><span class='line'>      <span class="n">startHour</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">not_allowed_start_hour</span>
+</span><span class='line'>      <span class="n">endHour</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">not_allowed_end_hour</span>
+</span><span class='line'>      <span class="n">allowed</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="no">Time</span><span class="o">.</span><span class="n">use_zone</span><span class="p">(</span><span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>        <span class="c1"># we&#39;re not allowed from startHour up to, but not including, endHour</span>
+</span><span class='line'>        <span class="n">allowed</span> <span class="o">=</span> <span class="kp">false</span> <span class="k">if</span> <span class="p">(</span><span class="n">startHour</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">endHour</span><span class="p">)</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">allowed</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kp">private</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">not_allowed_start_hour</span>
+</span><span class='line'>      <span class="no">NOT_ALLOWED_START_HOUR</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">not_allowed_end_hour</span>
+</span><span class='line'>      <span class="no">NOT_ALLOWED_END_HOUR</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Testing our implementation</h2>
+
+<p>An implementation is nice, but a tested, working implementation is better. Once again we&rsquo;ll use <strong><code>Time.use_zone</code></strong>, but we&rsquo;ll also add <a href="http://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html">ActiveSupport::Testing::TimeHelpers</a> <strong><code>travel_to</code></strong> to set the times we wish to test. The code inside the <strong><code>travel_to</code></strong> block will use the time we provide, then revert to the original time after block execution completes.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">RakeTaskTimeHelperTest</span> <span class="o">&lt;</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">TestCase</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">test</span> <span class="s1">&#39;is_allowed_to_run returns true when time is outside the bounds&#39;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">allowedStartHour</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">allowedEndHour</span> <span class="o">=</span> <span class="mi">7</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1"># 0 up to, but not including, allowedStartHour</span>
+</span><span class='line'>    <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">allowedStartHour</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">hour</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">assert_time_allowed</span> <span class="kp">true</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="mo">00</span><span class="p">,</span> <span class="mo">00</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1"># allowedEndHour up to, and including, 23</span>
+</span><span class='line'>    <span class="p">(</span><span class="n">allowedEndHour</span><span class="o">.</span><span class="n">.</span><span class="mi">23</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">hour</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">assert_time_allowed</span> <span class="kp">true</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="mo">00</span><span class="p">,</span> <span class="mo">00</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">test</span> <span class="s1">&#39;is_allowed_to_run returns false when time is inside the bounds&#39;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">allowedStartHour</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">allowedEndHour</span> <span class="o">=</span> <span class="mi">7</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1"># allowedStartHour up to, but not including, allowedEndHour</span>
+</span><span class='line'>    <span class="p">(</span><span class="n">allowedStartHour</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">allowedEndHour</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">hour</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">assert_time_allowed</span> <span class="kp">false</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mo">00</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">assert_time_allowed</span> <span class="n">expectedAllowed</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span>
+</span><span class='line'>    <span class="n">year</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">year</span>
+</span><span class='line'>    <span class="n">day</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">day</span>
+</span><span class='line'>    <span class="n">month</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">month</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="no">Time</span><span class="o">.</span><span class="n">use_zone</span><span class="p">(</span><span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>      <span class="c1"># use Time.current.utc_offset to create new time in correct time zone</span>
+</span><span class='line'>      <span class="n">travel_to</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span><span class="p">,</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">utc_offset</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>        <span class="c1"># use UTC to simulate the production environment</span>
+</span><span class='line'>        <span class="no">Time</span><span class="o">.</span><span class="n">use_zone</span><span class="p">(</span><span class="s2">&quot;UTC&quot;</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>          <span class="n">assert_equal</span> <span class="n">expectedAllowed</span><span class="p">,</span> <span class="no">MyDataSync</span><span class="o">::</span><span class="no">RakeTaskTimeHelper</span><span class="o">.</span><span class="n">is_allowed_to_run</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Wrapping Up</h2>
+
+<p>Working with time zones is tricky. Many developers, myself included, have been tripped up by intricasies of working with time zones. However, by using Rails <strong><code>Time.use_zone</code></strong>, we were able to achieve our stated goal of writing simple code to short-circuit rake tasks when they&rsquo;re not allowed to run. And by using Rails test helper <strong><code>travel_to</code></strong> we were able to write tests to ensure our helper class implemenation is working correctly.</p>
+
+<p>Finally, many thanks to <a href="https://twitter.com/datachomp">@datachomp</a> and <a href="https://twitter.com/jagthedrummer">@jagthedrummer</a> for helpful suggestions to improve this post.</p>
+
+<hr />
+
+<h2>Resources</h2>
+
+<p>There is much more to time zones in Ruby and Rails than covered here. These blog posts were super helpful in understanding how to deal with time zones in Rails.</p>
+
+<p>Elle Meredith&rsquo;s excellent two-part series: <a href="https://robots.thoughtbot.com/its-about-time-zones">It&rsquo;s About Time (Zones)</a> and <a href="https://robots.thoughtbot.com/a-case-study-in-multiple-time-zones">A Case Study in Multiple Time Zones</a>.</p>
+
+<p>And Nicklas Ramhö&rsquo;s wonderful <a href="http://www.elabs.se/blog/36-working-with-time-zones-in-ruby-on-rails">Working with time zones in Ruby on Rails</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Having Ionic Plugin Problems? Kill It With Fire!]]></title>

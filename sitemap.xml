@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://ryoe.github.io/archives/fun-with-time-zones-in-rails/</loc>
+<lastmod>2016-06-01T14:45:00-04:00</lastmod>
+</url>
+<url>
 <loc>http://ryoe.github.io/archives/having-ionic-plugin-problems-kill-it-with-fire/</loc>
 <lastmod>2016-05-28T13:51:00-04:00</lastmod>
 </url>
@@ -9,9 +13,6 @@
 </url>
 <url>
 <loc>http://ryoe.github.io/</loc>
-</url>
-<url>
-<loc>http://ryoe.github.io/drafts/fun-with-time-zones-in-rails/</loc>
 </url>
 <url>
 <loc>http://ryoe.github.io/about/</loc>
@@ -27,5 +28,14 @@
 </url>
 <url>
 <loc>http://ryoe.github.io/blog/categories/kill-it-with-fire/</loc>
+</url>
+<url>
+<loc>http://ryoe.github.io/blog/categories/ruby/</loc>
+</url>
+<url>
+<loc>http://ryoe.github.io/blog/categories/rails/</loc>
+</url>
+<url>
+<loc>http://ryoe.github.io/blog/categories/time-zones/</loc>
 </url>
 </urlset>

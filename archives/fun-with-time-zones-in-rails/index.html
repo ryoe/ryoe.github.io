@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ryoe.github.io/drafts/fun-with-time-zones-in-rails/">
+  <link rel="canonical" href="http://ryoe.github.io/archives/fun-with-time-zones-in-rails/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="ryoe - The Blog" type="application/atom+xml">
@@ -98,7 +98,7 @@ June 01, 2016
   </header>
 
 
-<div class="entry-content"><p>Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn&rsquo;t change over night for our continental US-based customers. What we wanted is for the tasks to only run between 7am-1am Eastern (4am-10pm Western) which should cover typical work hours. In other words, we want to ensure the tasks do not run between 1am-7am Eastern.</p>
+<div class="entry-content"><p>Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn&rsquo;t change over night for our continental US-based customers. What we wanted is for the tasks to only run between 7am-1am Eastern (4am-10pm Western) which should cover typical waking hours. In other words, we want to ensure the tasks do not run between 1am-7am Eastern.</p>
 
 <p>If you&rsquo;ve ever worked with time zones before, then you know this is often trickier than you&rsquo;d expect. This would be no different.</p>
 
@@ -106,7 +106,7 @@ June 01, 2016
 
 <h2>Goal: Do not run certain rake tasks between 1am-7am Eastern</h2>
 
-<p>We want an easy way to skip running certain tasks during certain hours of the day and be able to define those hours of the day using the time zone of our choice since that makes understanding easier for all involved. Ideally, we&rsquo;ll be able to write a little helper class so we can do something like this in our rake tasks:</p>
+<p>We want an easy way to skip running certain tasks during certain hours of the day. In addtion, we want to be able to define those hours of the day using the time zone of our choice so that it&rsquo;s easier to understand. Ideally, we&rsquo;ll be able to write a little helper class so we can do something like this in our rake tasks:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -184,7 +184,7 @@ June 01, 2016
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>In practice though, it&rsquo;s best to leave the system default UTC. Instead, we can use Rails <strong><code>Time.use_zone</code></strong> to override Ruby <strong><code>Time.zone</code></strong> inside a block. Once block execution completes, the original time zone is restored.</p>
+<p>In practice, it&rsquo;s best to leave the system time zone set to UTC. Instead, we can use Rails <strong><code>Time.use_zone</code></strong> to override Ruby <strong><code>Time.zone</code></strong> inside a block. Once block execution completes, the original time zone is restored.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -381,7 +381,7 @@ June 01, 2016
 
 <h2>Resources</h2>
 
-<p>There is much more to time zones in Ruby and Rails than I covered here. These blog posts were super helpful in understanding how to deal with time zones in Rails.</p>
+<p>There is much more to time zones in Ruby and Rails than covered here. These blog posts were super helpful in understanding how to deal with time zones in Rails.</p>
 
 <p>Elle Meredith&rsquo;s excellent two-part series: <a href="https://robots.thoughtbot.com/its-about-time-zones">It&rsquo;s About Time (Zones)</a> and <a href="https://robots.thoughtbot.com/a-case-study-in-multiple-time-zones">A Case Study in Multiple Time Zones</a>.</p>
 
@@ -406,7 +406,7 @@ June 01, 2016
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/time-zones/'>Time Zones</a>, <a class='category' href='/blog/categories/web/'>Web</a>
+    <a class='category' href='/blog/categories/rails/'>rails</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/time-zones/'>time zones</a>
   
 </span>
 
@@ -415,7 +415,7 @@ June 01, 2016
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ryoe.github.io/drafts/fun-with-time-zones-in-rails/index.html" data-via="ryoe_ok" data-counturl="http://ryoe.github.io/drafts/fun-with-time-zones-in-rails/index.html" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ryoe.github.io/archives/fun-with-time-zones-in-rails/" data-via="ryoe_ok" data-counturl="http://ryoe.github.io/archives/fun-with-time-zones-in-rails/" >Tweet</a>
   
   
   
@@ -424,10 +424,18 @@ June 01, 2016
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/archives/having-ionic-plugin-problems-kill-it-with-fire/" title="Previous Post: Having Ionic plugin problems? Kill it with fire!">&laquo; Having Ionic plugin problems? Kill it with fire!</a>
+      
       
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -436,6 +444,10 @@ June 01, 2016
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/archives/fun-with-time-zones-in-rails/">Fun With Time Zones in Rails</a>
+      </li>
     
       <li class="post">
         <a href="/archives/having-ionic-plugin-problems-kill-it-with-fire/">Having Ionic Plugin Problems? Kill It With Fire!</a>
@@ -475,7 +487,7 @@ June 01, 2016
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/ionic'>ionic (1)</a></li><li><a href='/blog/categories/ionic-plugins'>ionic plugins (1)</a></li><li><a href='/blog/categories/kill-it-with-fire'>kill it with fire (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/ionic'>ionic (1)</a></li><li><a href='/blog/categories/ionic-plugins'>ionic plugins (1)</a></li><li><a href='/blog/categories/kill-it-with-fire'>kill it with fire (1)</a></li><li><a href='/blog/categories/rails'>rails (1)</a></li><li><a href='/blog/categories/ruby'>ruby (1)</a></li><li><a href='/blog/categories/time-zones'>time zones (1)</a></li></ul>
 </section>
   
 </aside>
@@ -490,6 +502,22 @@ June 01, 2016
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'ryoetheblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ryoe.github.io/archives/fun-with-time-zones-in-rails/';
+        var disqus_url = 'http://ryoe.github.io/archives/fun-with-time-zones-in-rails/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 
