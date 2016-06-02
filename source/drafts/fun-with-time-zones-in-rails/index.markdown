@@ -2,11 +2,11 @@
 layout: post
 title: "Fun With Time Zones in Rails"
 date: 2016-06-01 14:45
-comments: true
+comments: false
 categories: [Web, Ruby, Rails, Time Zones]
 ---
 
-Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn't change over night for our US-based customers. What we wanted is to not run the tasks between 1am-7am Eastern time -- meaning the tasks would run between 7am Eastern and 10pm Western.
+Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn't change over night for our continental US-based customers. What we wanted is for the tasks to only run between 7am-1am Eastern (4am-10pm Western) which should cover typical work hours. In other words, we want to ensure the tasks do not run between 1am-7am Eastern.
 
 If you've ever worked with time zones before, then you know this is often trickier than you'd expect. This would be no different.
 
@@ -86,6 +86,10 @@ Here's a small module we can use in our rake task to see if it is "allowed" or "
 ```ruby
 module MyDataSync
   module RakeTaskTimeHelper
+    # default "not allowed" to 1am-7am US Eastern
+    # a real implementation would use environment vars, not hard-coded values
+    NOT_ALLOWED_START_HOUR = 1
+    NOT_ALLOWED_END_HOUR = 7
 
     def self.is_allowed_to_run
       startHour = self.not_allowed_start_hour
@@ -101,16 +105,12 @@ module MyDataSync
     end
 
     private
-    # default "not allowed" to 1am-7am US Eastern
-    # a real implementation would use environment vars, not hard-coded values
     def self.not_allowed_start_hour
-      startHour = 1
-      startHour
+      NOT_ALLOWED_START_HOUR
     end
 
     def self.not_allowed_end_hour
-      endHour = 7
-      endHour
+      NOT_ALLOWED_END_HOUR
     end
   end
 end
@@ -173,11 +173,15 @@ end
 
 Working with time zones is tricky. Many developers, myself included, have been tripped up by intricasies of working with time zones. However, by using Rails **`Time.use_zone`**, we were able to achieve our stated goal of writing simple code to short-circuit rake tasks when they're not allowed to run. And by using Rails test helper **`travel_to`** we were able to write tests to ensure our helper class implemenation is working correctly.
 
+Finally, many thanks to [@datachomp](https://twitter.com/datachomp) and [@jagthedrummer](https://twitter.com/jagthedrummer) for helpful suggestions to improve this post.
+
+
 ----
+
 
 ## Resources
 
-These blog posts were super helpful in understanding how to deal with time zones in Rails.
+There is much more to time zones in Ruby and Rails than I covered here. These blog posts were super helpful in understanding how to deal with time zones in Rails.
 
 Elle Meredith's excellent two-part series: [It's About Time (Zones)](https://robots.thoughtbot.com/its-about-time-zones) and [A Case Study in Multiple Time Zones](https://robots.thoughtbot.com/a-case-study-in-multiple-time-zones).
 
