@@ -4,7 +4,7 @@
   <title><![CDATA[ryoe - The Blog]]></title>
   <link href="http://ryoe.github.io/atom.xml" rel="self"/>
   <link href="http://ryoe.github.io/"/>
-  <updated>2016-06-01T21:20:04-04:00</updated>
+  <updated>2016-06-02T09:38:21-04:00</updated>
   <id>http://ryoe.github.io/</id>
   <author>
     <name><![CDATA[Rick Yoesting]]></name>
@@ -46,7 +46,7 @@
 </span><span class='line'>  <span class="n">task</span> <span class="ss">sync</span><span class="p">:</span> <span class="ss">:environment</span> <span class="k">do</span>
 </span><span class='line'>    <span class="k">unless</span> <span class="no">MyDataSync</span><span class="o">::</span><span class="no">RakeTaskTimeHelper</span><span class="o">.</span><span class="n">is_allowed_to_run</span>
 </span><span class='line'>      <span class="c1"># notify team that we&#39;re skipping this sync operation</span>
-</span><span class='line'>      <span class="k">return</span>
+</span><span class='line'>      <span class="k">next</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="c1"># sync stuff...</span>
