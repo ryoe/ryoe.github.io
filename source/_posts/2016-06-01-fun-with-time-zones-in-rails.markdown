@@ -23,7 +23,7 @@ namespace :mydatasync do
   task sync: :environment do
     unless MyDataSync::RakeTaskTimeHelper.is_allowed_to_run
       # notify team that we're skipping this sync operation
-      return
+      next
     end
 
     # sync stuff...
