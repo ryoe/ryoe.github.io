@@ -2,11 +2,11 @@
 layout: post
 title: "Fun With Time Zones in Rails"
 date: 2016-06-01 14:45
-comments: false
-categories: [Web, Ruby, Rails, Time Zones]
+comments: true
+categories: [Ruby, Rails, Time Zones]
 ---
 
-Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn't change over night for our continental US-based customers. What we wanted is for the tasks to only run between 7am-1am Eastern (4am-10pm Western) which should cover typical work hours. In other words, we want to ensure the tasks do not run between 1am-7am Eastern.
+Recently, we had a need to limit when certain rake tasks would run. The tasks sync our data with a third party data store that doesn't change over night for our continental US-based customers. What we wanted is for the tasks to only run between 7am-1am Eastern (4am-10pm Western) which should cover typical waking hours. In other words, we want to ensure the tasks do not run between 1am-7am Eastern.
 
 If you've ever worked with time zones before, then you know this is often trickier than you'd expect. This would be no different.
 
@@ -14,7 +14,7 @@ Thankfully, the Ruby [Time](http://ruby-doc.org/core-2.2.2/Time.html) and Rails 
 
 ## Goal: Do not run certain rake tasks between 1am-7am Eastern
 
-We want an easy way to skip running certain tasks during certain hours of the day and be able to define those hours of the day using the time zone of our choice since that makes understanding easier for all involved. Ideally, we'll be able to write a little helper class so we can do something like this in our rake tasks:
+We want an easy way to skip running certain tasks during certain hours of the day. In addtion, we want to be able to define those hours of the day using the time zone of our choice so that it's easier to understand. Ideally, we'll be able to write a little helper class so we can do something like this in our rake tasks:
 
 ```ruby
 namespace :mydatasync do
@@ -62,10 +62,9 @@ By default, Ruby and Rails default time to UTC. In Rails, this can be overridden
 ```ruby
 # default time zone is UTC
 config.time_zone = "Eastern Time (US & Canada)"
-
 ```
 
-In practice though, it's best to leave the system default UTC. Instead, we can use Rails **`Time.use_zone`** to override Ruby **`Time.zone`** inside a block. Once block execution completes, the original time zone is restored.
+In practice, it's best to leave the system time zone set to UTC. Instead, we can use Rails **`Time.use_zone`** to override Ruby **`Time.zone`** inside a block. Once block execution completes, the original time zone is restored.
 
 ```ruby
 # doing stuff in UTC...
@@ -76,7 +75,6 @@ Time.use_zone("Eastern Time (US & Canada)") do
 end
 
 # resume doing stuff in UTC...
-
 ```
 
 ## Putting it all together
@@ -181,7 +179,7 @@ Finally, many thanks to [@datachomp](https://twitter.com/datachomp) and [@jagthe
 
 ## Resources
 
-There is much more to time zones in Ruby and Rails than I covered here. These blog posts were super helpful in understanding how to deal with time zones in Rails.
+There is much more to time zones in Ruby and Rails than covered here. These blog posts were super helpful in understanding how to deal with time zones in Rails.
 
 Elle Meredith's excellent two-part series: [It's About Time (Zones)](https://robots.thoughtbot.com/its-about-time-zones) and [A Case Study in Multiple Time Zones](https://robots.thoughtbot.com/a-case-study-in-multiple-time-zones).
 
