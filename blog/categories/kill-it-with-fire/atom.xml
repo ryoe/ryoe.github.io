@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Kill It With Fire | ryoe - The Blog]]></title>
+  <title><![CDATA[Category: kill it with fire | ryoe - The Blog]]></title>
   <link href="http://ryoe.github.io/blog/categories/kill-it-with-fire/atom.xml" rel="self"/>
   <link href="http://ryoe.github.io/"/>
-  <updated>2016-06-02T09:38:21-04:00</updated>
+  <updated>2016-06-03T17:23:50-04:00</updated>
   <id>http://ryoe.github.io/</id>
   <author>
     <name><![CDATA[Rick Yoesting]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Having Ionic Plugin Problems? Kill It With Fire!]]></title>
+    <title type="html"><![CDATA[Having Ionic plugin problems? Kill it with fire!]]></title>
     <link href="http://ryoe.github.io/archives/having-ionic-plugin-problems-kill-it-with-fire/"/>
     <updated>2016-05-28T13:51:00-04:00</updated>
     <id>http://ryoe.github.io/archives/having-ionic-plugin-problems-kill-it-with-fire</id>
