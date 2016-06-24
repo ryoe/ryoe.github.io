@@ -4,7 +4,7 @@
   <title><![CDATA[ryoe - The Blog]]></title>
   <link href="http://ryoe.github.io/atom.xml" rel="self"/>
   <link href="http://ryoe.github.io/"/>
-  <updated>2016-06-03T17:23:50-04:00</updated>
+  <updated>2016-06-24T13:11:24-04:00</updated>
   <id>http://ryoe.github.io/</id>
   <author>
     <name><![CDATA[Rick Yoesting]]></name>
@@ -341,18 +341,22 @@
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>rm -rf ./plugins
 </span><span class='line'>rm -rf ./node_modules
 </span><span class='line'>rm -rf ./www/lib
 </span><span class='line'>
-</span><span class='line'>ionic platform rm ios
 </span><span class='line'>ionic platform rm android
+</span><span class='line'>ionic platform rm ios
 </span><span class='line'>
 </span><span class='line'>npm install
 </span><span class='line'>bower install
 </span><span class='line'>
-</span><span class='line'>ionic platform add ios
-</span><span class='line'>ionic platform add android</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>ionic state reset --plugins
+</span><span class='line'>
+</span><span class='line'>ionic platform add android
+</span><span class='line'>ionic platform add ios</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Shout out to <a href="https://twitter.com/ryanlabouve">Ryan LaBouve</a> for his help nurturing and growing <strong>Kill it with fire!</strong> from a simple home remedy into the world class recipe you see today.</p>

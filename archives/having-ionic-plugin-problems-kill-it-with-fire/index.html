@@ -73,6 +73,8 @@
 <ul class="main-navigation">
   <li><a href="/">Blog</a></li>
   <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/speaking">Speaking</a></li>
+  <li><a href="/about">About</a></li>
 </ul>
 
 </nav>
@@ -133,18 +135,22 @@
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>rm -rf ./plugins
 </span><span class='line'>rm -rf ./node_modules
 </span><span class='line'>rm -rf ./www/lib
 </span><span class='line'>
-</span><span class='line'>ionic platform rm ios
 </span><span class='line'>ionic platform rm android
+</span><span class='line'>ionic platform rm ios
 </span><span class='line'>
 </span><span class='line'>npm install
 </span><span class='line'>bower install
 </span><span class='line'>
-</span><span class='line'>ionic platform add ios
-</span><span class='line'>ionic platform add android</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>ionic state reset --plugins
+</span><span class='line'>
+</span><span class='line'>ionic platform add android
+</span><span class='line'>ionic platform add ios</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Shout out to <a href="https://twitter.com/ryanlabouve">Ryan LaBouve</a> for his help nurturing and growing <strong>Kill it with fire!</strong> from a simple home remedy into the world class recipe you see today.</p>
