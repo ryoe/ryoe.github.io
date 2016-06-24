@@ -25,14 +25,16 @@ rm -rf ./plugins
 rm -rf ./node_modules
 rm -rf ./www/lib
 
-ionic platform rm ios
 ionic platform rm android
+ionic platform rm ios
 
 npm install
 bower install
 
-ionic platform add ios
+ionic state reset --plugins
+
 ionic platform add android
+ionic platform add ios
 ```
 
 Shout out to [Ryan LaBouve](https://twitter.com/ryanlabouve) for his help nurturing and growing **Kill it with fire!** from a simple home remedy into the world class recipe you see today.
